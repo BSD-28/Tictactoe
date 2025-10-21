@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const PORT = 3000;
-const axios = require('axios')
 const cors = require("cors")
 
 const { createServer } = require('http');
@@ -27,6 +26,10 @@ app.post('/ai-move', async (req, res) => {
     try {
         const { board } = req.body;
 
+        if (!board || !Array.isArray(board) || board.length !== 9) {
+            return res.status(400).json({ error: "Board harus array 9 elemen" });
+        }
+
         const ai = new GoogleGenAI({
             apiKey: 'AIzaSyBrHa1rAX16O5rQ6aqS0cYuLcqOz76UGGc',
         });
@@ -41,26 +44,31 @@ Board: ${JSON.stringify(board)}
             `,
         });
 
+        console.log("AI candidates content:", JSON.stringify(response.candidates[0].content, null, 2));
 
-        // console.log(response);
-        
+        const candidateContent = response?.candidates?.[0]?.content?.parts;
+        if (!candidateContent || !candidateContent.length) {
+            console.error("AI content kosong:", JSON.stringify(response, null, 2));
+            return res.status(500).json({ error: "AI response empty" });
+        }
 
-        const moveText = response.output_text.trim();
-
-
+        const moveText = candidateContent[0].text.trim();
         const move = parseInt(moveText, 10);
 
-        if (isNaN(move) || move < 0 || move > 8) {
-            console.log('Invalid AI response:', moveText);
-            return res.status(400).json({ error: 'Invalid AI response', moveText });
+        if (isNaN(move)) {
+            console.error("AI move bukan angka:", moveText);
+            return res.status(500).json({ error: "AI move invalid" });
         }
 
         res.status(200).json({ move });
+
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
