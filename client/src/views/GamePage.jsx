@@ -1,47 +1,206 @@
-import { useState } from "react";
-import { socket } from "../socket/socket";
+import { useEffect, useState } from "react";
+import { Link, Scripts } from "react-router";
+import { socket } from "../socket/socket"
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+
 
 function GamePage() {
   const username = localStorage.getItem("username") || "Player";
   const [gameId, setGameId] = useState("");
   const [isInRoom, setIsInRoom] = useState(false);
   const [opponentName, setOpponentName] = useState("");
+  const [board, setBoard] = useState([
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
+  ])
+  const [turn, setTurn] = useState("X");
+
+  const [winner, setWinner] = useState(null);
+
+  // ✅ fungsi untuk cek pemenang
+  const checkWinner = (b) => {
+    const lines = [
+      // baris
+      [b[0][0], b[0][1], b[0][2]],
+      [b[1][0], b[1][1], b[1][2]],
+      [b[2][0], b[2][1], b[2][2]],
+      // kolom
+      [b[0][0], b[1][0], b[2][0]],
+      [b[0][1], b[1][1], b[2][1]],
+      [b[0][2], b[1][2], b[2][2]],
+      // diagonal
+      [b[0][0], b[1][1], b[2][2]],
+      [b[0][2], b[1][1], b[2][0]],
+    ];
+
+    for (let line of lines) {
+      if (line[0] && line[0] === line[1] && line[1] === line[2]) {
+        return line[0]; // "X" atau "O"
+      }
+    }
+    // cek draw
+    const isDraw = b.flat().every((cell) => cell !== "");
+    if (isDraw) return "Draw";
+    return null;
+  };
+
+  useEffect(() => {
+    socket.on("gameCreated", (newGameId) => {
+      setGameId(newGameId);
+      setIsInRoom(true);
+      Toastify({
+        text: `✅ Game created! ID: ${newGameId}`,
+        duration: 3000,
+        gravity: "bottom",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+    });
+
+    socket.on("startGame", (data) => {
+      const opponent = data.players.find((p) => p !== username);
+      setOpponentName(opponent);
+      setBoard(data.board);
+      setTurn(data.turn);
+      setIsInRoom(true)
+      Toastify({
+        text: `🎮 Game started! Your opponent: ${opponent}`,
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "linear-gradient(to right, #2193b0, #6dd5ed)",
+      }).showToast();
+    });
+
+
+    socket.on("gameState", (data) => {
+      setBoard(data.board);
+      setTurn(data.turn);
+
+      const result = checkWinner(data.board);
+      if (result && !winner) {
+        setWinner(result);
+
+        if (result === "Draw") {
+          Toastify({
+            text: `🤝 It's a draw!`,
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "linear-gradient(to right, #ffafbd, #ffc3a0)",
+          }).showToast();
+        } else {
+          // Tentukan simbol user berdasarkan urutan
+          // Misal pemain pertama selalu "X", lawan "O"
+          const mySymbol = data.players?.[0] === username ? "X" : "O";
+          const isWinner = result === mySymbol;
+
+          Toastify({
+            text: isWinner ? "🏆 You Win!" : "💀 You Lose!",
+            duration: 4000,
+            gravity: "top",
+            position: "center",
+            backgroundColor: isWinner
+              ? "linear-gradient(to right, #00b09b, #96c93d)"
+              : "linear-gradient(to right, #ff5f6d, #ffc371)",
+          }).showToast();
+        }
+      }
+    });
+
+
+    socket.on("playerJoined", (data) => {
+      console.log("New player joined:", data);
+    });
+
+    socket.on("gameEnded", (data) => {
+      Toastify({
+        text: data.message || "Game has ended.",
+        duration: 4000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      }).showToast();
+
+      // Bersihkan state game
+      setIsInRoom(false);
+      setBoard([
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+      ]);
+      setGameId("");
+      setOpponentName("");
+      setWinner(null);
+    });
+
+    socket.on("errorMsg", (msg) => {
+      Toastify({
+        text: `⚠️ ${msg}`,
+        duration: 3000,
+        gravity: "bottom",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      }).showToast();
+    });
+
+    socket.on("playerLeft", (data) => {
+      Toastify({
+        text: `❌ Player ${data.username} has left the game.`,
+        duration: 4000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "linear-gradient(to right, #ff416c, #ff4b2b)",
+      }).showToast();
+    });
+
+    return () => {
+      socket.off("gameCreated");
+      socket.off("startGame");
+      socket.off("gameState");
+      socket.off("playerJoined");
+      socket.off("errorMsg");
+      socket.off("pongClient");
+      socket.off("playerLeft");
+      socket.off("gameEnded");
+    };
+  }, []);
+
 
   const handleCreate = () => {
     socket.connect();
     socket.emit("createGame", username);
-    socket.on("gameCreated", (newGameId) => {
-      setGameId(newGameId);
-      setIsInRoom(true);
-      console.log("Game created with ID:", newGameId);
-    });
-
-    socket.on("startGame", (data) => {
-      const opponent = data.players.find((p) => p !== username);
-      setOpponentName(opponent);
-    });
-  };
+  }
 
   const handleJoin = () => {
     socket.connect();
     socket.emit("joinGame", { gameId, username });
-    socket.on("startGame", (data) => {
-      setIsInRoom(true);
-      const opponent = data.players.find((p) => p !== username);
-      setOpponentName(opponent);
-      console.log("Game started with players:", data.players);
-    });
-  };
 
-  // Dummy board state for display
-  const board = [
-    ["X", "O", "X"],
-    ["O", "X", "O"],
-    ["", "", "X"],
-  ];
+  }
+
+  const handleClickCell = (row, col) => {
+    // emit move to server
+    if (winner) return;
+
+    socket.emit("makeMove", { gameId, row, col, username });
+  }
+
+
+
 
   return (
-    <>
+    <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">
+      {/* Navbar */}
+      <nav className="flex justify-between items-center bg-white/10 backdrop-blur-lg border-b border-white/20 p-2 px-6">
+        <div className="flex-1">
+          <Link to="/home" className="btn btn-ghost text-xl text-white">
+            ← Back to Home
+          </Link>
+        </div>
+      </nav>
+
       {/* Game Info */}
       <div className="text-center mt-6 text-white">
         {isInRoom && (
@@ -53,7 +212,7 @@ function GamePage() {
           </p>
         )}
       </div>
-
+      {/* Main Content */}
       {!isInRoom ? (
         <div className="flex flex-col items-center justify-center py-20 text-center text-white space-y-6">
           <h1 className="text-4xl font-extrabold drop-shadow-lg">
@@ -155,36 +314,31 @@ function GamePage() {
                     </div>
                   </div>
 
-                  {/* Tic Tac Toe Board */}
-                  <div className="flex justify-center items-center">
-                    <div className="grid grid-cols-3 gap-3 p-6 bg-white/5 rounded-xl">
-                      {board.flat().map((cell, index) => (
-                        <button
-                          key={index}
-                          className={`
-                          w-24 h-24 text-5xl font-bold rounded-xl
-                          transition-all duration-200
-                          ${cell === "X" ? "bg-blue-500 text-white" : ""}
-                          ${cell === "O" ? "bg-red-500 text-white" : ""}
-                          ${
-                            !cell
-                              ? "bg-white/10 hover:bg-white/20 text-white/30"
-                              : ""
-                          }
-                          ${
-                            !cell
-                              ? "hover:scale-105 cursor-pointer"
-                              : "cursor-not-allowed"
-                          }
-                          border-2 border-white/20
-                          shadow-lg
-                        `}
-                        >
-                          {cell || ""}
-                        </button>
-                      ))}
+                  {/* CENTER BOARD */}
+                  <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
+                    <div className="card-body p-6 flex justify-center items-center">
+                      <div className="grid grid-cols-3 gap-3 p-6 bg-white/5 rounded-xl">
+                        {board.map((row, rIndex) =>
+                          row.map((cell, cIndex) => (
+                            <button
+                              key={`${rIndex}-${cIndex}`}
+                              onClick={() => handleClickCell(rIndex, cIndex)}
+                              disabled={!!cell}
+                              className={`w-24 h-24 text-5xl font-bold rounded-xl border-2 border-white/20 shadow-lg transition-all ${cell === "X"
+                                ? "bg-blue-500 text-white"
+                                : cell === "O"
+                                  ? "bg-red-500 text-white"
+                                  : "bg-white/10 hover:bg-white/20 text-white/30 hover:scale-105"
+                                }`}
+                            >
+                              {cell}
+                            </button>
+                          ))
+                        )}
+                      </div>
                     </div>
                   </div>
+
 
                   {/* Game Controls */}
                   <div className="flex gap-3 mt-6">

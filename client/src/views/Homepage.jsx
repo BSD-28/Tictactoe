@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router";
 import { socket } from "../socket/socket";
 import { useEffect } from "react";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 function HomePage() {
   const username = localStorage.getItem("username") || "Player";
@@ -26,10 +28,25 @@ function HomePage() {
       console.log("Received pong from server");
     });
 
+    socket.emit("joinGame", { gameId: "room1", username });
+
+    
+
+    if (!username) {
+      Toastify({
+        text: "⚠️ Username belum diatur! Pastikan login dulu.",
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      }).showToast();
+    }
+
     return () => {
       socket.disconnect();
     };
   }, []);
+
 
   return (
     <>
