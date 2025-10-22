@@ -12,12 +12,18 @@ export default function VsAi() {
   // Cek pemenang
   const checkWinner = (board) => {
     const lines = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
     ];
-    for (let [a,b,c] of lines) {
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
+    for (let [a, b, c] of lines) {
+      if (board[a] && board[a] === board[b] && board[a] === board[c])
+        return board[a];
     }
     return board.includes(null) ? null : "Draw";
   };
@@ -48,7 +54,9 @@ export default function VsAi() {
     const timer = setTimeout(async () => {
       try {
         setAiThinking(true);
-        const res = await axios.post("http://localhost:3000/ai-move", { board });
+        const res = await axios.post("http://localhost:3000/ai-move", {
+          board,
+        });
         const move = res.data.move;
 
         const newBoard = [...board];
@@ -71,16 +79,7 @@ export default function VsAi() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center bg-white/10 backdrop-blur-lg border-b border-white/20 p-2 px-6">
-        <div className="flex-1">
-          <Link to="/home" className="btn btn-ghost text-xl text-white">
-            ← Back to Home
-          </Link>
-        </div>
-      </nav>
-
+    <>
       {/* Main Game */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -88,11 +87,17 @@ export default function VsAi() {
             {/* Player Sidebar */}
             <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
               <div className="card-body text-center">
-                <h3 className="text-2xl font-bold text-white mb-2">{username}</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {username}
+                </h3>
                 <div className="badge badge-primary mb-4">❌ Player X</div>
                 <div className="bg-blue-500/30 rounded-lg p-4 border-2 border-blue-400 mt-4 animate-pulse">
                   <div className="text-center text-white font-bold">
-                    {aiThinking ? "🤖 AI Thinking..." : winner ? "✅ Game Over" : "⏰ YOUR TURN"}
+                    {aiThinking
+                      ? "🤖 AI Thinking..."
+                      : winner
+                      ? "✅ Game Over"
+                      : "⏰ YOUR TURN"}
                   </div>
                 </div>
               </div>
@@ -101,7 +106,9 @@ export default function VsAi() {
             {/* Board */}
             <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
               <div className="card-body p-6 text-center">
-                <h2 className="text-3xl font-bold text-white mb-4">Tic Tac Toe vs AI</h2>
+                <h2 className="text-3xl font-bold text-white mb-4">
+                  Tic Tac Toe vs AI
+                </h2>
 
                 <div className="flex justify-center items-center">
                   <div className="grid grid-cols-3 gap-3 p-6 bg-white/5 rounded-xl">
@@ -118,7 +125,11 @@ export default function VsAi() {
                               ? "bg-red-500 text-white"
                               : "bg-white/10 hover:bg-white/20 text-white/30 hover:scale-105"
                           }
-                          ${winner || aiThinking ? "cursor-not-allowed" : "cursor-pointer"}
+                          ${
+                            winner || aiThinking
+                              ? "cursor-not-allowed"
+                              : "cursor-pointer"
+                          }
                         `}
                       >
                         {cell || ""}
@@ -143,7 +154,7 @@ export default function VsAi() {
                   <button
                     onClick={handleReset}
                     className="flex items-center gap-2 px-6 py-3 text-lg font-semibold text-white 
-                    bg-gradient-to-r from-yellow-400 to-orange-500 
+                    bg-linear-to-r from-yellow-400 to-orange-500 
                     rounded-xl border border-yellow-300 shadow-lg
                     transition-all duration-300 ease-out 
                     hover:scale-110 hover:shadow-[0_0_15px_rgba(255,200,0,0.7)] 
@@ -158,18 +169,24 @@ export default function VsAi() {
             {/* AI Sidebar */}
             <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
               <div className="card-body text-center">
-                <h3 className="text-2xl font-bold text-white mb-2">AI Opponent</h3>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  AI Opponent
+                </h3>
                 <div className="badge badge-error mb-4">⭕ Player O</div>
                 <div className="bg-white/10 rounded-lg p-4 border-2 border-white/20">
                   <div className="text-center text-white/50 font-bold">
-                    {aiThinking ? "🧠 THINKING..." : winner ? "⏸️ WAITING..." : "⚡ READY"}
+                    {aiThinking
+                      ? "🧠 THINKING..."
+                      : winner
+                      ? "⏸️ WAITING..."
+                      : "⚡ READY"}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div> 
-    </div>
+      </div>
+    </>
   );
 }

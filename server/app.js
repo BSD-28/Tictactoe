@@ -74,7 +74,7 @@ Board: ${JSON.stringify(board)}
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
+const games = {}
 
 io.on('connection', (socket) => {
     console.log('a user connected:', socket.id);
