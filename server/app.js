@@ -17,6 +17,13 @@ const io = new Server(server, {
     }
 });
 
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true
+}));
+app.use(express.json());
+
 app.get('/', (req, res) => {
     res.send('Tic Tac Toe Server is running');
 });
