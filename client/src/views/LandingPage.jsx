@@ -1,15 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import Toastify from "toastify-js";
 
 function LandingPage() {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("username");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    localStorage.setItem("username", username);
-    navigate("/home");
+    try {
+      localStorage.setItem("username", username);
+      navigate("/home");
+      Toastify({
+        text: "Login success",
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+    } catch (err) {
+      console.error(err);
+      Toastify({
+        text: "need username",
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        backgroundColor: "linear-gradient(to right, #ffafbd, #ffc3a0)",
+      }).showToast();
+    }
   }
+
+  useEffect(() => {
+    if (token) {
+      navigate("/home");
+    }
+  }, [token]);
+
   return (
     <>
       <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">
@@ -18,11 +49,11 @@ function LandingPage() {
           <div className="text-center space-y-8 max-w-4xl">
             {/* Logo/Icon */}
             <div className="inline-block">
-              <div className="text-9xl mb-4 animate-pulse">⭕❌</div>
+              <div className="text-6xl animate-pulse">⭕❌</div>
             </div>
 
             {/* Title */}
-            <h1 className="text-6xl md:text-8xl font-bold text-white mb-4 drop-shadow-2xl">
+            <h1 className="text-6xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
               Tic Tac Toe
             </h1>
 
