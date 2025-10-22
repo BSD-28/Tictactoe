@@ -75,6 +75,8 @@ Board: ${JSON.stringify(board)}
     }
 });
 
+const games = {}
+
 
 io.on('connection', (socket) => {
     console.log('a user connected:', socket.id);
