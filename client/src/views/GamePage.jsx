@@ -205,7 +205,10 @@ function GamePage() {
       <div className="text-center mt-6 text-white">
         {isInRoom && (
           <p className="text-lg">
-            Game ID: <span className="font-mono bg-white/20 px-2 py-1 rounded">{gameId}</span>
+            Game ID:{" "}
+            <span className="font-mono bg-white/20 px-2 py-1 rounded">
+              {gameId}
+            </span>
           </p>
         )}
       </div>
@@ -216,13 +219,14 @@ function GamePage() {
             🎮 Multiplayer Lobby
           </h1>
           <p className="text-white/80 max-w-md">
-            Create a new game room or join your friend's match using the game ID.
+            Create a new game room or join your friend's match using the game
+            ID.
           </p>
 
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl w-full max-w-md space-y-6">
             <button
               onClick={handleCreate}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform"
+              className="w-full py-3 bg-linear-to-r from-blue-500 to-cyan-400 text-white font-bold rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform"
             >
               ➕ Create Game
             </button>
@@ -237,7 +241,7 @@ function GamePage() {
               />
               <button
                 onClick={handleJoin}
-                className="px-5 py-3 bg-gradient-to-r from-purple-500 to-pink-400 text-white font-bold rounded-xl hover:scale-105 transition-transform shadow-md"
+                className="px-5 py-3 bg-linear-to-r from-purple-500 to-pink-400 text-white font-bold rounded-xl hover:scale-105 transition-transform shadow-md"
               >
                 Join
               </button>
@@ -245,7 +249,6 @@ function GamePage() {
           </div>
         </div>
       ) : (
-
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -393,9 +396,8 @@ function GamePage() {
             </div>
           </div>
         </div>
-      )
-      }
-    </div >
+      )}
+    </>
   );
 }
 
