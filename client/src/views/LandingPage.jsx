@@ -18,11 +18,11 @@ function LandingPage() {
           <div className="text-center space-y-8 max-w-4xl">
             {/* Logo/Icon */}
             <div className="inline-block">
-              <div className="text-9xl mb-4 animate-pulse">⭕❌</div>
+              <div className="text-6xl animate-pulse">⭕❌</div>
             </div>
 
             {/* Title */}
-            <h1 className="text-6xl md:text-8xl font-bold text-white mb-4 drop-shadow-2xl">
+            <h1 className="text-6xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
               Tic Tac Toe
             </h1>
 
