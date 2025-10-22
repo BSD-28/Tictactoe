@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 function LandingPage() {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("username");
 
   function handleSubmit(e) {
     e.preventDefault();
     localStorage.setItem("username", username);
     navigate("/home");
   }
+
+  useEffect(() => {
+    if (token) {
+      navigate("/home");
+    }
+  }, [token]);
+
   return (
     <>
       <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">

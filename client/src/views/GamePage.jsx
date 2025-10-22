@@ -1,5 +1,3 @@
-import { Link } from "react-router";
-
 function GamePage() {
   const username = localStorage.getItem("username") || "Player";
 
@@ -11,16 +9,7 @@ function GamePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center bg-white/10 backdrop-blur-lg border-b border-white/20 p-2 px-6">
-        <div className="flex-1">
-          <Link to="/home" className="btn btn-ghost text-xl text-white">
-            ← Back to Home
-          </Link>
-        </div>
-      </nav>
-
+    <>
       {/* Main Game Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -174,7 +163,7 @@ function GamePage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
