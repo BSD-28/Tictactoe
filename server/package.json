@@ -1,10 +1,5 @@
 {
   "dependencies": {
-<<<<<<< HEAD
-=======
-    "@google/genai": "^1.25.0",
-    "axios": "^1.12.2",
->>>>>>> a9c3a2a773afbe0d0dfd9d2cbf606d46b735c52a
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "socket.io": "^4.8.1"
