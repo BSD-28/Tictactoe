@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link, Scripts } from "react-router";
-import { socket } from "../socket/socket"
+import { socket } from "../socket/socket";
 
 function GamePage() {
   const username = localStorage.getItem("username") || "Player";
@@ -21,8 +20,7 @@ function GamePage() {
       const opponent = data.players.find((p) => p !== username);
       setOpponentName(opponent);
     });
-
-  }
+  };
 
   const handleJoin = () => {
     socket.connect();
@@ -33,7 +31,7 @@ function GamePage() {
       setOpponentName(opponent);
       console.log("Game started with players:", data.players);
     });
-  }
+  };
 
   // Dummy board state for display
   const board = [
@@ -43,21 +41,15 @@ function GamePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center bg-white/10 backdrop-blur-lg border-b border-white/20 p-2 px-6">
-        <div className="flex-1">
-          <Link to="/home" className="btn btn-ghost text-xl text-white">
-            ← Back to Home
-          </Link>
-        </div>
-      </nav>
-
-       {/* Game Info */}
+    <>
+      {/* Game Info */}
       <div className="text-center mt-6 text-white">
         {isInRoom && (
           <p className="text-lg">
-            Game ID: <span className="font-mono bg-white/20 px-2 py-1 rounded">{gameId}</span>
+            Game ID:{" "}
+            <span className="font-mono bg-white/20 px-2 py-1 rounded">
+              {gameId}
+            </span>
           </p>
         )}
       </div>
@@ -68,13 +60,14 @@ function GamePage() {
             🎮 Multiplayer Lobby
           </h1>
           <p className="text-white/80 max-w-md">
-            Create a new game room or join your friend's match using the game ID.
+            Create a new game room or join your friend's match using the game
+            ID.
           </p>
 
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl w-full max-w-md space-y-6">
             <button
               onClick={handleCreate}
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform"
+              className="w-full py-3 bg-linear-to-r from-blue-500 to-cyan-400 text-white font-bold rounded-xl shadow-md hover:scale-105 hover:shadow-xl transition-transform"
             >
               ➕ Create Game
             </button>
@@ -89,7 +82,7 @@ function GamePage() {
               />
               <button
                 onClick={handleJoin}
-                className="px-5 py-3 bg-gradient-to-r from-purple-500 to-pink-400 text-white font-bold rounded-xl hover:scale-105 transition-transform shadow-md"
+                className="px-5 py-3 bg-linear-to-r from-purple-500 to-pink-400 text-white font-bold rounded-xl hover:scale-105 transition-transform shadow-md"
               >
                 Join
               </button>
@@ -97,7 +90,6 @@ function GamePage() {
           </div>
         </div>
       ) : (
-
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -174,14 +166,16 @@ function GamePage() {
                           transition-all duration-200
                           ${cell === "X" ? "bg-blue-500 text-white" : ""}
                           ${cell === "O" ? "bg-red-500 text-white" : ""}
-                          ${!cell
+                          ${
+                            !cell
                               ? "bg-white/10 hover:bg-white/20 text-white/30"
                               : ""
-                            }
-                          ${!cell
+                          }
+                          ${
+                            !cell
                               ? "hover:scale-105 cursor-pointer"
                               : "cursor-not-allowed"
-                            }
+                          }
                           border-2 border-white/20
                           shadow-lg
                         `}
@@ -248,9 +242,8 @@ function GamePage() {
             </div>
           </div>
         </div>
-      )
-      }
-    </div >
+      )}
+    </>
   );
 }
 
