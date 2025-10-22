@@ -1,15 +1,46 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import Toastify from "toastify-js";
 
 function LandingPage() {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("username");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    localStorage.setItem("username", username);
-    navigate("/home");
+    try {
+      localStorage.setItem("username", username);
+      navigate("/home");
+      Toastify({
+        text: "Login success",
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "#34D399",
+          color: "#000000",
+        },
+      }).showToast();
+    } catch (err) {
+      console.error(err);
+      Toastify({
+        text: "need username",
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        gravity: "bottom", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "#F87171",
+          color: "#000000",
+        },
+      }).showToast();
+    }
   }
 
   useEffect(() => {
