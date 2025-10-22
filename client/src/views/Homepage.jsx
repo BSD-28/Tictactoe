@@ -2,9 +2,11 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { socket } from "../socket/socket"
 import { useEffect } from "react";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 function Homepage() {
-  const username = localStorage.getItem("username") || "Player";
+  const username = localStorage.getItem("username");
   const [selectedMode, setSelectedMode] = useState("online");
   const navigate = useNavigate();
 
@@ -29,13 +31,25 @@ function Homepage() {
       console.log("Received pong from server");
     });
 
+    socket.emit("joinGame", { gameId: "room1", username });
+
     
-    
+
+    if (!username) {
+      Toastify({
+        text: "⚠️ Username belum diatur! Pastikan login dulu.",
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      }).showToast();
+    }
 
     return () => {
       socket.disconnect();
     };
   }, []);
+
 
   return (
     <>
@@ -71,11 +85,10 @@ function Homepage() {
               {/* Online Mode */}
               <div
                 onClick={() => setSelectedMode("online")}
-                className={`card cursor-pointer transition-all ${
-                  selectedMode === "online"
-                    ? "bg-white/30 border-4 border-yellow-300"
-                    : "bg-white/10 border-2 border-white/30"
-                } hover:bg-white/20`}
+                className={`card cursor-pointer transition-all ${selectedMode === "online"
+                  ? "bg-white/30 border-4 border-yellow-300"
+                  : "bg-white/10 border-2 border-white/30"
+                  } hover:bg-white/20`}
               >
                 <div className="card-body items-center text-center">
                   <div className="text-6xl mb-2">🌐</div>
@@ -87,11 +100,10 @@ function Homepage() {
               {/* AI Mode */}
               <div
                 onClick={() => setSelectedMode("ai")}
-                className={`card cursor-pointer transition-all ${
-                  selectedMode === "ai"
-                    ? "bg-white/30 border-4 border-yellow-300"
-                    : "bg-white/10 border-2 border-white/30"
-                } hover:bg-white/20`}
+                className={`card cursor-pointer transition-all ${selectedMode === "ai"
+                  ? "bg-white/30 border-4 border-yellow-300"
+                  : "bg-white/10 border-2 border-white/30"
+                  } hover:bg-white/20`}
               >
                 <div className="card-body items-center text-center">
                   <div className="text-6xl mb-2">🤖</div>
