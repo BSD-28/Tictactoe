@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router";
 import axios from "axios";
 
 export default function VsAi() {
@@ -85,20 +84,16 @@ export default function VsAi() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Player Sidebar */}
-            <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-              <div className="card-body text-center">
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {username}
-                </h3>
-                <div className="badge badge-primary mb-4">❌ Player X</div>
-                <div className="bg-blue-500/30 rounded-lg p-4 border-2 border-blue-400 mt-4 animate-pulse">
-                  <div className="text-center text-white font-bold">
-                    {aiThinking
-                      ? "🤖 AI Thinking..."
-                      : winner
-                      ? "✅ Game Over"
-                      : "⏰ YOUR TURN"}
-                  </div>
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl flex flex-col justify-center items-center">
+              <h3 className="text-2xl font-bold text-white mb-2">{username}</h3>
+              <div className="badge badge-primary mb-4">❌ Player X</div>
+              <div className="bg-blue-500/30 rounded-lg p-4 border-2 border-blue-400 mt-4 animate-pulse">
+                <div className="text-center text-white font-bold">
+                  {aiThinking
+                    ? "🤖 AI Thinking..."
+                    : winner
+                    ? "✅ Game Over"
+                    : "⏰ YOUR TURN"}
                 </div>
               </div>
             </div>
@@ -167,20 +162,18 @@ export default function VsAi() {
             </div>
 
             {/* AI Sidebar */}
-            <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-              <div className="card-body text-center">
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  AI Opponent
-                </h3>
-                <div className="badge badge-error mb-4">⭕ Player O</div>
-                <div className="bg-white/10 rounded-lg p-4 border-2 border-white/20">
-                  <div className="text-center text-white/50 font-bold">
-                    {aiThinking
-                      ? "🧠 THINKING..."
-                      : winner
-                      ? "⏸️ WAITING..."
-                      : "⚡ READY"}
-                  </div>
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl flex flex-col justify-center items-center">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                AI Opponent
+              </h3>
+              <div className="badge badge-error mb-4">⭕ Player O</div>
+              <div className="bg-white/10 rounded-lg p-4 border-2 border-white/20">
+                <div className="text-center text-white/50 font-bold">
+                  {aiThinking
+                    ? "🧠 THINKING..."
+                    : winner
+                    ? "⏸️ WAITING..."
+                    : "⚡ READY"}
                 </div>
               </div>
             </div>

@@ -8,6 +8,7 @@ import GamePage from "./views/GamePage.jsx";
 import VsAi from "./views/VsAi.jsx";
 import BaseLayout from "./views/BaseLayout.jsx";
 import ThemeContext from "./context/ThemeContext.jsx";
+import "toastify-js/src/toastify.css"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

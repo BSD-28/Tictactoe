@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Scripts } from "react-router";
-import { socket } from "../socket/socket"
+import { socket } from "../socket/socket";
 import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
-
 
 function GamePage() {
   const username = localStorage.getItem("username") || "Player";
@@ -14,7 +12,7 @@ function GamePage() {
     ["", "", ""],
     ["", "", ""],
     ["", "", ""],
-  ])
+  ]);
   const [turn, setTurn] = useState("X");
 
   const [winner, setWinner] = useState(null);
@@ -64,16 +62,15 @@ function GamePage() {
       setOpponentName(opponent);
       setBoard(data.board);
       setTurn(data.turn);
-      setIsInRoom(true)
+      setIsInRoom(true);
       Toastify({
         text: `🎮 Game started! Your opponent: ${opponent}`,
         duration: 3000,
-        gravity: "top",
-        position: "center",
+        gravity: "bottom",
+        position: "right",
         backgroundColor: "linear-gradient(to right, #2193b0, #6dd5ed)",
       }).showToast();
     });
-
 
     socket.on("gameState", (data) => {
       setBoard(data.board);
@@ -87,8 +84,8 @@ function GamePage() {
           Toastify({
             text: `🤝 It's a draw!`,
             duration: 3000,
-            gravity: "top",
-            position: "center",
+            gravity: "bottom",
+            position: "right",
             backgroundColor: "linear-gradient(to right, #ffafbd, #ffc3a0)",
           }).showToast();
         } else {
@@ -100,8 +97,8 @@ function GamePage() {
           Toastify({
             text: isWinner ? "🏆 You Win!" : "💀 You Lose!",
             duration: 4000,
-            gravity: "top",
-            position: "center",
+            gravity: "bottom",
+            position: "right",
             backgroundColor: isWinner
               ? "linear-gradient(to right, #00b09b, #96c93d)"
               : "linear-gradient(to right, #ff5f6d, #ffc371)",
@@ -109,7 +106,6 @@ function GamePage() {
         }
       }
     });
-
 
     socket.on("playerJoined", (data) => {
       console.log("New player joined:", data);
@@ -119,8 +115,8 @@ function GamePage() {
       Toastify({
         text: data.message || "Game has ended.",
         duration: 4000,
-        gravity: "top",
-        position: "center",
+        gravity: "bottom",
+        position: "right",
         backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
       }).showToast();
 
@@ -150,8 +146,8 @@ function GamePage() {
       Toastify({
         text: `❌ Player ${data.username} has left the game.`,
         duration: 4000,
-        gravity: "top",
-        position: "center",
+        gravity: "bottom",
+        position: "right",
         backgroundColor: "linear-gradient(to right, #ff416c, #ff4b2b)",
       }).showToast();
     });
@@ -168,39 +164,25 @@ function GamePage() {
     };
   }, []);
 
-
   const handleCreate = () => {
     socket.connect();
     socket.emit("createGame", username);
-  }
+  };
 
   const handleJoin = () => {
     socket.connect();
     socket.emit("joinGame", { gameId, username });
-
-  }
+  };
 
   const handleClickCell = (row, col) => {
     // emit move to server
     if (winner) return;
 
     socket.emit("makeMove", { gameId, row, col, username });
-  }
-
-
-
+  };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-600 via-blue-600 to-cyan-500">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center bg-white/10 backdrop-blur-lg border-b border-white/20 p-2 px-6">
-        <div className="flex-1">
-          <Link to="/home" className="btn btn-ghost text-xl text-white">
-            ← Back to Home
-          </Link>
-        </div>
-      </nav>
-
+    <>
       {/* Game Info */}
       <div className="text-center mt-6 text-white">
         {isInRoom && (
@@ -253,40 +235,17 @@ function GamePage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Sidebar - Player 1 Info */}
-              <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-                <div className="card-body">
-                  <div className="flex flex-col items-center">
-                    <h3 className="text-2xl font-bold text-white mb-2">
-                      {username}
-                    </h3>
-                    <div className="badge badge-primary mb-4">❌ Player X</div>
+              <div className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl flex flex-col justify-center items-center">
+                <div className="flex flex-col items-center gap-4">
+                  <h3 className="text-2xl font-bold text-white">{username}</h3>
+                  <div className="badge badge-primary text-white">
+                    ❌ Player X
+                  </div>
 
-                    <div className="w-full space-y-3 mt-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/70">Wins</span>
-                        <span className="text-2xl font-bold text-green-400">
-                          15
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/70">Turn Time</span>
-                        <span className="text-2xl font-bold text-white">
-                          00:12
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/70">Score</span>
-                        <span className="text-2xl font-bold text-yellow-400">
-                          2100
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-full mt-6">
-                      <div className="bg-blue-500/30 rounded-lg p-4 border-2 border-blue-400 animate-pulse">
-                        <div className="text-center text-white font-bold">
-                          ⏰ YOUR TURN
-                        </div>
+                  <div className="w-fit">
+                    <div className="bg-blue-500/30 rounded-lg p-4 border-2 border-blue-400 animate-pulse">
+                      <div className="text-center text-white font-bold">
+                        ⏰ YOUR TURN
                       </div>
                     </div>
                   </div>
@@ -295,99 +254,52 @@ function GamePage() {
 
               {/* Center - Game Board */}
               <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-                <div className="card-body p-6">
+                <div className="p-6">
                   {/* Game Status */}
                   <div className="text-center mb-6">
                     <h2 className="text-3xl font-bold text-white mb-2">
-                      Round 3
+                      Tic Tac Toe vs Online Player
                     </h2>
-                    <div className="flex justify-center gap-4">
-                      <div className="badge badge-lg bg-blue-500 text-white">
-                        You: 1
-                      </div>
-                      <div className="badge badge-lg bg-white/20 text-white">
-                        Draw: 1
-                      </div>
-                      <div className="badge badge-lg bg-red-500 text-white">
-                        Opp: 1
-                      </div>
-                    </div>
                   </div>
 
                   {/* CENTER BOARD */}
-                  <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-                    <div className="card-body p-6 flex justify-center items-center">
-                      <div className="grid grid-cols-3 gap-3 p-6 bg-white/5 rounded-xl">
-                        {board.map((row, rIndex) =>
-                          row.map((cell, cIndex) => (
-                            <button
-                              key={`${rIndex}-${cIndex}`}
-                              onClick={() => handleClickCell(rIndex, cIndex)}
-                              disabled={!!cell}
-                              className={`w-24 h-24 text-5xl font-bold rounded-xl border-2 border-white/20 shadow-lg transition-all ${cell === "X"
+                  <div className="bg-white/10 backdrop-blur-lg border border-white/0 shadow-xl">
+                    <div className="grid grid-cols-3 gap-3 bg-white/5 rounded-xl">
+                      {board.map((row, rIndex) =>
+                        row.map((cell, cIndex) => (
+                          <button
+                            key={`${rIndex}-${cIndex}`}
+                            onClick={() => handleClickCell(rIndex, cIndex)}
+                            disabled={!!cell}
+                            className={`w-24 h-24 text-5xl font-bold rounded-xl border-2 border-white/20 shadow-lg transition-all ${
+                              cell === "X"
                                 ? "bg-blue-500 text-white"
                                 : cell === "O"
-                                  ? "bg-red-500 text-white"
-                                  : "bg-white/10 hover:bg-white/20 text-white/30 hover:scale-105"
-                                }`}
-                            >
-                              {cell}
-                            </button>
-                          ))
-                        )}
-                      </div>
+                                ? "bg-red-500 text-white"
+                                : "bg-white/10 hover:bg-white/20 text-white/30 hover:scale-105"
+                            }`}
+                          >
+                            {cell}
+                          </button>
+                        ))
+                      )}
                     </div>
-                  </div>
-
-
-                  {/* Game Controls */}
-                  <div className="flex gap-3 mt-6">
-                    <button className="btn btn-outline btn-error flex-1">
-                      Resign 🏳️
-                    </button>
-                    <button className="btn btn-outline btn-warning flex-1">
-                      Draw Offer 🤝
-                    </button>
                   </div>
                 </div>
               </div>
 
               {/* Right Sidebar - Player 2 Info */}
-              <div className="card bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl">
-                <div className="card-body">
-                  <div className="flex flex-col items-center">
-                    <div className="avatar placeholder mb-4"></div>
-                    <h3 className="text-2xl font-bold text-white mb-2">
-                      {opponentName || "waiting..."}
-                    </h3>
-                    <div className="badge badge-error mb-4">⭕ Player O</div>
+              <div className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl flex flex-col justify-center items-center">
+                <div className="flex flex-col items-center gap-4">
+                  <h3 className="text-2xl font-bold text-white">
+                    {opponentName || "waiting..."}
+                  </h3>
+                  <div className="badge badge-error mb-4">⭕ Player O</div>
 
-                    <div className="w-full space-y-3 mt-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/70">Wins</span>
-                        <span className="text-2xl font-bold text-green-400">
-                          12
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/70">Turn Time</span>
-                        <span className="text-2xl font-bold text-white/50">
-                          --:--
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-white/70">Score</span>
-                        <span className="text-2xl font-bold text-yellow-400">
-                          1950
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-full mt-6">
-                      <div className="bg-white/10 rounded-lg p-4 border-2 border-white/20">
-                        <div className="text-center text-white/50 font-bold">
-                          ⏸️ WAITING...
-                        </div>
+                  <div className="w-fit">
+                    <div className="bg-white/10 rounded-lg p-4 border-2 border-white/20">
+                      <div className="text-center text-white/50 font-bold">
+                        ⏸️ WAITING...
                       </div>
                     </div>
                   </div>

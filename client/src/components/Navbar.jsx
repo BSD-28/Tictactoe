@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import { themeContext } from "../context/ThemeContext";
+import Toastify from "toastify-js";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -9,6 +10,16 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
+
+    Toastify({
+      text: "Logout success",
+      duration: 3000,
+      newWindow: true,
+      close: true,
+      gravity: "bottom", // `top` or `bottom`
+      position: "right", // `left`, `center` or `right`
+      backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+    }).showToast();
   };
   return (
     <>
