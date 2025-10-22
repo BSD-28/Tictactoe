@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { socket } from "../socket/socket"
+import { useEffect } from "react";
 
 function Homepage() {
   const username = localStorage.getItem("username") || "Player";
@@ -14,6 +16,26 @@ function Homepage() {
   const handleGame = () => {
     navigate("/game");
   };
+
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("Connected to the socket server");
+    });
+
+    socket.emit("pingServer");
+    socket.on("pongClient", () => {
+      console.log("Received pong from server");
+    });
+
+    
+    
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <>
