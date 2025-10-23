@@ -10,26 +10,15 @@ const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { GoogleGenAI } = require("@google/genai");
-const { log } = require("console");
-
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: CLIENT_URL,
-    methods: ["GET", "POST"],
-    credentials: true,
+    origin: ["http://localhost:5173", "https://tictactoe-red-delta.vercel.app"],
   },
 });
 
-app.use(
-  cors({
-    origin: CLIENT_URL,
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
