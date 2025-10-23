@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import BASE_URL from "../../constant";
 
 export default function VsAi() {
   const username = localStorage.getItem("username") || "Player";
@@ -53,7 +54,7 @@ export default function VsAi() {
     const timer = setTimeout(async () => {
       try {
         setAiThinking(true);
-        const res = await axios.post("http://localhost:3000/ai-move", {
+        const res = await axios.post(`${BASE_URL}/ai-move`, {
           board,
         });
         const move = res.data.move;
